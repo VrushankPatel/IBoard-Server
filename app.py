@@ -1,9 +1,6 @@
 from flask import Flask, send_file, request, Response, jsonify, make_response
 from flask_cors import CORS
 import json
-from src.DgInOrdering import DgInOrdering
-from src.DgInFieldsMapper import getFieldsMapped
-from src.SingleMapFields import getSingleMappedFields
 from sqlalchemy import update
 from flask_sqlalchemy import SQLAlchemy
 
@@ -25,7 +22,7 @@ class IBoard(db.Model):
         self.text = text
 
 
-@app.route("/api/IBoardInsertPayLoad", methods=['POST'])
+@app.route("/api/iBoardInsertPayLoad", methods=['POST'])
 def DEBoardInsertPayLoad():
     requestData = request.get_json()
     uniqueId = requestData["uniqueId"]
@@ -42,7 +39,7 @@ def DEBoardInsertPayLoad():
     return "OK", 201
 
 
-@app.route("/api/DEBoardGet", methods=['POST'])
+@app.route("/api/iBoardGet", methods=['POST'])
 def DEBoardGet():
     requestData = request.get_json()
     uniqueId = requestData["uniqueId"]
