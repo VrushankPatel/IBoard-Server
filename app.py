@@ -50,6 +50,11 @@ def DEBoardGet():
     return "", 204
 
 
+@app.route("/api", methods=['GET'])
+def healthCheck():
+    return "I am alive!", 200
+
+
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)
