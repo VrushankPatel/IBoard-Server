@@ -17,14 +17,14 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 db = SQLAlchemy(app)
 
-
 class IBoard(db.Model):
     id = db.Column('board_id', db.String(100), primary_key=True)    
     text = db.Column('board_text', db.String(10485760))
     created_at = db.Column("created_at",db.DateTime(timezone=True), default=func.now())
-    def __init__(self, id, text):
+    def __init__(self, id, text, created_at):
         self.id = id
         self.text = text
+        self.created_at = created_at
 
 
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
@@ -36,11 +36,12 @@ def DEBoardInsertPayLoad():
     if value:
         if value.text == payLoad:            
             return "NO Update", 200
-        value.text = str(payLoad)        
+        value.text = str(payLoad)
+        value.created_at = func.now()
         db.session.flush()
         db.session.commit()
         return "OK", 202
-    db.session.add(IBoard(uniqueId, payLoad))
+    db.session.add(IBoard(uniqueId, payLoad, func.now()))
     db.session.commit()
     return "OK", 201
 
