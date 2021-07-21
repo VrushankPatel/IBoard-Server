@@ -3,9 +3,12 @@ from flask_cors import CORS
 import json
 from sqlalchemy import update
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    "DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 CORS(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -15,7 +18,7 @@ db = SQLAlchemy(app)
 
 class IBoard(db.Model):
     id = db.Column('board_id', db.String(100), primary_key=True)
-    text = db.Column(db.String(4294000000))
+    text = db.Column('board_text', db.String(10485760))
 
     def __init__(self, id, text):
         self.id = id
@@ -43,8 +46,8 @@ def DEBoardInsertPayLoad():
 def DEBoardGet():
     requestData = request.get_json()
     uniqueId = requestData["uniqueId"]
-    value = IBoard.query.filter(IBoard.id == str(
-        uniqueId)).first()
+    value = IBoard.query.filter(IBoard.id == str(uniqueId)).first()
+
     if value:
         return value.text, 201
     return "", 204
