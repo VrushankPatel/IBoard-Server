@@ -3,7 +3,9 @@ from flask_cors import CORS
 import json
 from sqlalchemy import update
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -17,9 +19,9 @@ db = SQLAlchemy(app)
 
 
 class IBoard(db.Model):
-    id = db.Column('board_id', db.String(100), primary_key=True)
+    id = db.Column('board_id', db.String(100), primary_key=True)    
     text = db.Column('board_text', db.String(10485760))
-
+    created_at = db.Column("created_at",db.DateTime(timezone=True), default=func.now())
     def __init__(self, id, text):
         self.id = id
         self.text = text
@@ -28,12 +30,13 @@ class IBoard(db.Model):
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
 def DEBoardInsertPayLoad():
     requestData = request.get_json()
-    uniqueId = requestData["uniqueId"]
-    payLoad = requestData["payLoad"]
+    uniqueId, payLoad = requestData["uniqueId"], requestData["payLoad"]     
     value = IBoard.query.filter(IBoard.id == str(
-        uniqueId)).first()
+        uniqueId)).first()        
     if value:
-        value.text = str(payLoad)
+        if value.text == payLoad:            
+            return "NO Update", 200
+        value.text = str(payLoad)        
         db.session.flush()
         db.session.commit()
         return "OK", 202
