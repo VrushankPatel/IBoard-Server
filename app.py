@@ -55,7 +55,7 @@ def DEBoardInsertPayLoad():
 def DEBoardGet():
     requestData = request.get_json()
     uniqueId = requestData["uniqueId"]
-    if cache[uniqueId]:
+    if uniqueId in cache.keys():
         return cache[uniqueId], 201
     value = IBoard.query.filter(IBoard.id == str(uniqueId)).first()
 
