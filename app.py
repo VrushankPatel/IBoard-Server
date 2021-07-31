@@ -14,8 +14,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 CORS(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
-cache = {}
+
 db = SQLAlchemy(app)
+
 
 class IBoard(db.Model):
     id = db.Column('board_id', db.String(100), primary_key=True)
@@ -32,12 +33,11 @@ class IBoard(db.Model):
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
 def DEBoardInsertPayLoad():
     requestData = request.get_json()
-    uniqueId, payLoad = requestData["uniqueId"], requestData["payLoad"]
+    uniqueId, payLoad = requestData["uniqueId"].upper(), requestData["payLoad"]    
     value = IBoard.query.filter(IBoard.id == str(
         uniqueId)).first()
     db.engine.execute(
         "delete from i_board where created_at < now() - interval '1 days'")
-    cache[uniqueId] = payLoad
     if value:
         if value.text == payLoad:
             return "NO Update", 200
@@ -55,12 +55,9 @@ def DEBoardInsertPayLoad():
 def DEBoardGet():
     requestData = request.get_json()
     uniqueId = requestData["uniqueId"]
-    if uniqueId in cache.keys():
-        return cache[uniqueId], 201
     value = IBoard.query.filter(IBoard.id == str(uniqueId)).first()
 
     if value:
-        cache[uniqueId] = value.text
         return value.text, 201
     return "", 204
 
