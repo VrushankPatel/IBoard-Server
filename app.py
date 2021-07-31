@@ -17,6 +17,7 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 db = SQLAlchemy(app)
 
+cache = {}
 
 class IBoard(db.Model):
     id = db.Column('board_id', db.String(100), primary_key=True)
@@ -33,9 +34,8 @@ class IBoard(db.Model):
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
 def DEBoardInsertPayLoad():
     requestData = request.get_json()
-    uniqueId, payLoad = requestData["uniqueId"].upper(), requestData["payLoad"]    
-    value = IBoard.query.filter(IBoard.id == str(
-        uniqueId)).first()
+    uniqueId, payLoad = str(requestData["uniqueId"]).upper(), requestData["payLoad"]    
+    value = IBoard.query.filter(IBoard.id == uniqueId).first()
     db.engine.execute(
         "delete from i_board where created_at < now() - interval '1 days'")
     if value:
@@ -54,8 +54,8 @@ def DEBoardInsertPayLoad():
 @app.route("/api/iBoardGet", methods=['POST'])
 def DEBoardGet():
     requestData = request.get_json()
-    uniqueId = requestData["uniqueId"]
-    value = IBoard.query.filter(IBoard.id == str(uniqueId)).first()
+    uniqueId = str(requestData["uniqueId"]).upper()
+    value = IBoard.query.filter(IBoard.id == uniqueId).first()
 
     if value:
         return value.text, 201
