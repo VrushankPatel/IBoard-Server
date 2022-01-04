@@ -64,7 +64,7 @@ def DEBoardGet():
 
 @app.route("/api", methods=['GET'])
 def healthCheck():
-    return "I am alive!", 200
+    return jsonify({"message": "Server is up and running"}), 200    
 
 
 if __name__ == "__main__":
