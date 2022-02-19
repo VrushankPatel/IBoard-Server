@@ -32,7 +32,7 @@ class IBoard(db.Model):
 
 
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
-def DEBoardInsertPayLoad():
+def iboard_insert_payload():
     request_data = request.get_json()
     unique_id, payload = str(request_data["uniqueId"]).upper(), request_data["payLoad"]    
     value = IBoard.query.filter(IBoard.id == unique_id).first()
@@ -52,7 +52,7 @@ def DEBoardInsertPayLoad():
 
 
 @app.route("/api/iBoardGet", methods=['POST'])
-def DEBoardGet():
+def iboard_get():
     request_data = request.get_json()
     unique_id = str(request_data["uniqueId"]).upper()
     value = IBoard.query.filter(IBoard.id == unique_id).first()
@@ -63,7 +63,7 @@ def DEBoardGet():
 
 
 @app.route("/api", methods=['GET'])
-def healthCheck():
+def health_check():
     return jsonify({"message": "Server is up and running"}), 200    
 
 
