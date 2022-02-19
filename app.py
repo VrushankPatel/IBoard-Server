@@ -33,29 +33,29 @@ class IBoard(db.Model):
 
 @app.route("/api/iBoardInsertPayLoad", methods=['POST'])
 def DEBoardInsertPayLoad():
-    requestData = request.get_json()
-    uniqueId, payLoad = str(requestData["uniqueId"]).upper(), requestData["payLoad"]    
-    value = IBoard.query.filter(IBoard.id == uniqueId).first()
+    request_data = request.get_json()
+    unique_id, payload = str(request_data["uniqueId"]).upper(), request_data["payLoad"]    
+    value = IBoard.query.filter(IBoard.id == unique_id).first()
     db.engine.execute(
         "delete from i_board where created_at < now() - interval '1 days'")
     if value:
-        if value.text == payLoad:
+        if value.text == payload:
             return "NO Update", 200
-        value.text = str(payLoad)
+        value.text = str(payload)
         value.created_at = func.now()
         db.session.flush()
         db.session.commit()
         return "OK", 202
-    db.session.add(IBoard(uniqueId, payLoad, func.now()))
+    db.session.add(IBoard(unique_id, payload, func.now()))
     db.session.commit()
     return "OK", 201
 
 
 @app.route("/api/iBoardGet", methods=['POST'])
 def DEBoardGet():
-    requestData = request.get_json()
-    uniqueId = str(requestData["uniqueId"]).upper()
-    value = IBoard.query.filter(IBoard.id == uniqueId).first()
+    request_data = request.get_json()
+    unique_id = str(request_data["uniqueId"]).upper()
+    value = IBoard.query.filter(IBoard.id == unique_id).first()
 
     if value:
         return value.text, 201
